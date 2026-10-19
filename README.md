@@ -44,7 +44,7 @@ qianji-auto-a11y/
 │   └── src/main/
 │       ├── AndroidManifest.xml
 │       ├── assets/pay_rules.json      # 各支付 App 的页面场景规则
-│       ├── java/com/dsh/autoqianji/   # 全部 Kotlin 源码
+│       ├── java/com/dsh/qianji_auto_a11y/   # 全部 Kotlin 源码
 │       └── res/                       # 布局、图标、主题、无障碍配置
 ├── build.gradle.kts
 ├── settings.gradle.kts
