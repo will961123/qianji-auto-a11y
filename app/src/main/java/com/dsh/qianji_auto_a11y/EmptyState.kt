@@ -15,7 +15,7 @@ import android.widget.TextView
  *       android:id="@+id/emptyState"
  *       app:emptyIcon="@drawable/ic_line_folder"
  *       app:emptyTitle="还没有自定义规则"
- *       app:emptyHint="没命中的商户会用内置规则" />
+ *       app:emptyHint="没命中的商户会继续用页面分类或默认值" />
  */
 class EmptyState @JvmOverloads constructor(
     context: Context,

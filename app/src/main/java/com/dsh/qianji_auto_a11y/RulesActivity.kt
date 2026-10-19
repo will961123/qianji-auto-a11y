@@ -23,12 +23,8 @@ class RulesActivity : AppCompatActivity() {
     private lateinit var store: Store
     private var kind: String = Store.RULE_CATEGORY
 
-    private val builtinRows = ArrayList<RuleRow>()
     private val customRows = ArrayList<RuleRow>()
-    private var builtinAdapter: RulesAdapter? = null
     private var customAdapter: RulesAdapter? = null
-    private lateinit var builtinTouch: ItemTouchHelper
-    private lateinit var customTouch: ItemTouchHelper
 
     private val isAsset get() = kind == Store.RULE_ASSET
 
@@ -43,16 +39,14 @@ class RulesActivity : AppCompatActivity() {
             setTitle(if (isAsset) "资产匹配规则" else "分类匹配规则")
             setSubtitle(
                 if (isAsset) {
-                    "先匹配自定义规则，再匹配内置规则；命中即停。目标资产要已经导入过才生效。"
+                    "从上到下依次匹配付款方式，命中即停；目标资产要已经导入过才生效。"
                 } else {
-                    "先匹配自定义规则，再匹配内置规则；组内从上到下，命中即停。"
+                    "从上到下依次匹配商户文本，命中即停；目标分类要已经导入过才生效。"
                 }
             )
         }
-        findViewById<PageHeader>(R.id.pageHeader).addAction("恢复内置规则") { confirmRestore() }
         findViewById<TextView>(R.id.btnAddRule).setOnClickListener { showEditor(null) }
 
-        builtinAdapter = bindList(R.id.rvBuiltin, builtinRows)
         customAdapter = bindList(R.id.rvCustom, customRows)
         reload()
     }
@@ -114,23 +108,14 @@ class RulesActivity : AppCompatActivity() {
     }
 
     private fun reload() {
-        builtinRows.clear()
-        builtinRows.addAll(store.ruleRows(kind, builtin = true))
-        builtinAdapter?.notifyDataSetChanged()
-
         customRows.clear()
-        customRows.addAll(store.ruleRows(kind, builtin = false))
+        customRows.addAll(store.ruleRows(kind))
         customAdapter?.notifyDataSetChanged()
 
-        findViewById<TextView>(R.id.tvBuiltinLabel).text = "内置规则（${builtinRows.size}）"
-        findViewById<TextView>(R.id.tvCustomLabel).text = "自定义规则（${customRows.size}）"
+        findViewById<TextView>(R.id.tvCustomLabel).text = "匹配规则（${customRows.size}）"
 
         // RecyclerView 在 ScrollView 里默认只量一屏，必须显式给高度，否则后面的规则看不到
-        fixListHeight(findViewById(R.id.rvBuiltin), builtinRows.size)
         fixListHeight(findViewById(R.id.rvCustom), customRows.size)
-
-        findViewById<View>(R.id.cardBuiltin).visibility =
-            if (builtinRows.isEmpty()) View.GONE else View.VISIBLE
 
         findViewById<View>(R.id.cardCustom).visibility =
             if (customRows.isEmpty()) View.GONE else View.VISIBLE
@@ -138,18 +123,6 @@ class RulesActivity : AppCompatActivity() {
             if (customRows.isEmpty()) View.VISIBLE else View.GONE
     }
 
-    private fun confirmRestore() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("恢复内置规则")
-            .setMessage("内置规则会恢复成出厂状态，你新增的自定义规则不受影响。")
-            .setPositiveButton("恢复") { _, _ ->
-                store.restoreBuiltins(kind)
-                reload()
-                toast("已恢复内置规则")
-            }
-            .setNegativeButton("取消", null)
-            .show()
-    }
 
     private fun confirmDelete(row: RuleRow) {
         androidx.appcompat.app.AlertDialog.Builder(this)
@@ -162,10 +135,7 @@ class RulesActivity : AppCompatActivity() {
             .show()
     }
 
-    /**
-     * 一个底部面板里完成「填关键词 + 选分类 + 保存」。
-     * 编辑内置规则时保存不会改变它的「内置」身份，恢复内置规则时会一起重置。
-     */
+    /** 一个底部面板里完成「填关键词 + 选分类 + 保存」 */
     private fun showEditor(existing: RuleRow?) {
         val all = store.categoryTree()
         val roots = all.filter { !it.isChild }

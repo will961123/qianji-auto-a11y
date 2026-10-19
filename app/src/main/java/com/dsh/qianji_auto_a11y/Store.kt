@@ -30,45 +30,22 @@ class Store(context: Context) : SQLiteOpenHelper(context.applicationContext, "au
     }
 
     private fun createAll(db: SQLiteDatabase) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS rules(_id INTEGER PRIMARY KEY AUTOINCREMENT, keyword TEXT NOT NULL, catename TEXT NOT NULL, kind TEXT NOT NULL DEFAULT 'category', sort INTEGER NOT NULL DEFAULT 0, builtin INTEGER NOT NULL DEFAULT 0)")
+        db.execSQL("CREATE TABLE IF NOT EXISTS rules(_id INTEGER PRIMARY KEY AUTOINCREMENT, keyword TEXT NOT NULL, catename TEXT NOT NULL, kind TEXT NOT NULL DEFAULT 'category', sort INTEGER NOT NULL DEFAULT 0)")
         db.execSQL("CREATE TABLE IF NOT EXISTS logs(_id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, pkg TEXT, amount TEXT, merchant TEXT, catename TEXT, status TEXT, detail TEXT, account TEXT, type INTEGER NOT NULL DEFAULT 0, billtime TEXT NOT NULL DEFAULT '', coupon TEXT NOT NULL DEFAULT '', account2 TEXT NOT NULL DEFAULT '')")
         db.execSQL("CREATE TABLE IF NOT EXISTS assets(name TEXT PRIMARY KEY, sort INTEGER NOT NULL DEFAULT 0, grp TEXT NOT NULL DEFAULT '')")
         db.execSQL("CREATE TABLE IF NOT EXISTS categories(name TEXT NOT NULL, parent TEXT NOT NULL DEFAULT '', sort INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(name, parent))")
         db.execSQL("CREATE TABLE IF NOT EXISTS books(name TEXT PRIMARY KEY, sort INTEGER NOT NULL DEFAULT 0)")
     }
 
-    /** 播种出厂规则 */
+    /** 建库时只补内置分类；匹配规则全部由用户自己添加 */
     private fun seedBuiltins(db: SQLiteDatabase) {
-        insertBuiltins(db, RULE_CATEGORY, Builtin.categoryRules)
-        insertBuiltins(db, RULE_ASSET, Builtin.assetRules)
         // 内置分类始终存在（用户删除后重建时也会补回来）
         Builtin.protectedCategories.forEach { name ->
             db.execSQL("INSERT OR IGNORE INTO categories(name, parent, sort) VALUES(?, '', 0)", arrayOf(name))
         }
     }
 
-    private fun insertBuiltins(db: SQLiteDatabase, kind: String, rules: List<Builtin.Rule>) {
-        rules.forEachIndexed { index, rule ->
-            db.execSQL(
-                "INSERT INTO rules(keyword, catename, kind, sort, builtin) VALUES (?,?,?,?,1)",
-                arrayOf<Any>(rule.keyword, rule.target, kind, index + 1)
-            )
-        }
-    }
 
-    /** 把内置规则恢复成出厂状态，自定义规则不动 */
-    fun restoreBuiltins(kind: String) {
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
-            db.delete("rules", "kind=? AND builtin=1", arrayOf(kind))
-            val defaults = if (kind == RULE_ASSET) Builtin.assetRules else Builtin.categoryRules
-            insertBuiltins(db, kind, defaults)
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-        }
-    }
 
     /**
      * 增量迁移表：key 是「升到哪个版本」时要做的事。
@@ -100,6 +77,7 @@ class Store(context: Context) : SQLiteOpenHelper(context.applicationContext, "au
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         recreateAll(db)
     }
+
 
     private fun recreateAll(db: SQLiteDatabase) {
         for (t in listOf("rules", "logs", "assets", "categories", "books")) {
@@ -306,22 +284,20 @@ class Store(context: Context) : SQLiteOpenHelper(context.applicationContext, "au
         return matchRule(RULE_ASSET, t)
     }
 
-    /** 先跑完全部自定义规则，再跑内置规则；目标名对不上就跳过这条 */
+    /** 按顺序匹配用户规则；目标名对不上就跳过这条 */
     private fun matchRule(kind: String, text: String): String? {
         if (text.isBlank()) return null
         val pool = if (kind == RULE_CATEGORY) categories() else assets()
         if (pool.isEmpty()) return null
-        for (builtin in intArrayOf(0, 1)) {
-            readableDatabase.rawQuery(
-                "SELECT keyword, catename FROM rules WHERE kind=? AND builtin=? ORDER BY sort, _id",
-                arrayOf(kind, builtin.toString())
-            ).use { c ->
-                while (c.moveToNext()) {
-                    val k = c.getString(0) ?: continue
-                    if (k.isBlank() || !text.contains(k)) continue
-                    val resolved = Builtin.resolve(c.getString(1) ?: "", pool)
-                    if (resolved != null) return resolved
-                }
+        readableDatabase.rawQuery(
+            "SELECT keyword, catename FROM rules WHERE kind=? ORDER BY sort, _id",
+            arrayOf(kind)
+        ).use { c ->
+            while (c.moveToNext()) {
+                val k = c.getString(0) ?: continue
+                if (k.isBlank() || !text.contains(k)) continue
+                val resolved = Builtin.resolve(c.getString(1) ?: "", pool)
+                if (resolved != null) return resolved
             }
         }
         return null
@@ -329,7 +305,7 @@ class Store(context: Context) : SQLiteOpenHelper(context.applicationContext, "au
 
     fun addRule(keyword: String, catename: String, kind: String = RULE_CATEGORY) {
         val next = readableDatabase.rawQuery(
-            "SELECT IFNULL(MAX(sort), 0) + 1 FROM rules WHERE kind=? AND builtin=0",
+            "SELECT IFNULL(MAX(sort), 0) + 1 FROM rules WHERE kind=?",
             arrayOf(kind)
         ).use { c -> if (c.moveToFirst()) c.getInt(0) else 1 }
         val v = ContentValues().apply {
@@ -337,7 +313,6 @@ class Store(context: Context) : SQLiteOpenHelper(context.applicationContext, "au
             put("catename", catename)
             put("kind", kind)
             put("sort", next)
-            put("builtin", 0)
         }
         writableDatabase.insert("rules", null, v)
     }
@@ -356,11 +331,11 @@ class Store(context: Context) : SQLiteOpenHelper(context.applicationContext, "au
         }
     }
 
-    fun ruleRows(kind: String = RULE_CATEGORY, builtin: Boolean = false): List<RuleRow> {
+    fun ruleRows(kind: String = RULE_CATEGORY): List<RuleRow> {
         val out = ArrayList<RuleRow>()
         readableDatabase.rawQuery(
-            "SELECT _id, keyword, catename FROM rules WHERE kind=? AND builtin=? ORDER BY sort, _id",
-            arrayOf(kind, if (builtin) "1" else "0")
+            "SELECT _id, keyword, catename FROM rules WHERE kind=? ORDER BY sort, _id",
+            arrayOf(kind)
         ).use { c ->
             while (c.moveToNext()) out.add(RuleRow(c.getLong(0), c.getString(1), c.getString(2)))
         }

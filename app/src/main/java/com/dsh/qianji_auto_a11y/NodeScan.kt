@@ -234,7 +234,8 @@ object NodeScan {
      * 用卡片里的字段标签定位范围，把底层页面的干扰节点排除掉。
      */
     private fun scopeNodes(nodes: List<NodeMeta>, rule: PayRules.Rule): List<NodeMeta> {
-        val anchors = (rule.timeLabels + rule.methodLabels).distinct()
+        // 分类行常在「付款方式」下方，必须一起算进锚点，否则会被裁掉
+        val anchors = (rule.timeLabels + rule.methodLabels + rule.categoryLabels).distinct()
         if (anchors.isEmpty()) return nodes
         val anchorNodes = nodes.filter { n -> anchors.any { n.text.contains(it) } }
         if (anchorNodes.isEmpty()) return nodes

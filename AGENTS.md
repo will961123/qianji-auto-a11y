@@ -36,7 +36,7 @@ adb exec-out run-as com.dsh.qianji_auto_a11y cat databases/auto.db > auto.db
 | `Config.kt` | SharedPreferences 开关与默认值 |
 | `Importer.kt` + `XlsxReader.kt` | 读钱迹导出的 xlsx/csv/json，抽资产/分类/账本 |
 | `Backup.kt` | 本应用数据的 JSON 导出/导入（勾选式，导入为整表覆盖） |
-| `Builtin.kt` | 出厂规则与内置分类（`其它` 不可删） |
+| `Builtin.kt` | 内置分类（`其它` 不可删）与支付页面分类别名映射 |
 | `MainActivity.kt` | 首页 + 设置页（设置页很长，注意分组顺序） |
 | `LogActivity.kt` / `EntrySheet.kt` | 记录列表与详情弹窗 |
 | `LookupActivity.kt` / `LookupAdapter.kt` | 资产/分类/账本管理（分组卡片 + 拖拽排序 + 长按菜单） |
@@ -46,7 +46,7 @@ adb exec-out run-as com.dsh.qianji_auto_a11y cat databases/auto.db > auto.db
 
 ## 关键不变量
 
-1. **规则驱动，不要写死 App 逻辑**。新的支付场景加在 `pay_rules.json`；新的解析能力加通用字段（如 `amountIsNet`、`amount`、`merchantSuffix`、`timeOptional`、`couponEnabled`、`type`、`account2`），不要针对某个 App 写分支。
+1. **规则驱动，不要写死 App 逻辑**。匹配规则（关键词 → 分类 / 付款方式 → 资产）全部由用户自己添加，代码里不内置；新的支付场景加在 `pay_rules.json`；新的解析能力加通用字段（如 `amountIsNet`、`amount`、`merchantSuffix`、`timeOptional`、`couponEnabled`、`type`、`account2`），不要针对某个 App 写分支。
 2. **解析顺序固定**（见 `NodeScan.parse`）：先 `scopeNodes` 收窄到详情卡片，再取时间、金额、商户、优惠/原价、类型、分类、资产。改顺序容易破坏已有场景。
 3. **优先「结构」而非「标签名」**：优惠行常改叫法（立减/抵价券/支付遇财神），现在是「已知标签 → 值为负数的行 → 原价-实付倒推」三级兜底。
 4. **类型决定表单**：`type == 2 || 3`（转账/还款）时隐藏分类、显示「转出/转入」，分类留空；列表里也按这个规则渲染。
