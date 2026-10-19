@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.AutoQianji" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/app_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.AutoQianji.Overlay" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="Theme.AutoQianji.NoAnim" parent="Theme.AutoQianji">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowBackground">#FF141416</item>
+        <item name="android:windowSplashScreenBackground">#FF141416</item>
+    </style>
+
+    <style name="PageTitle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+    </style>
+
+    <!-- 卡片上方的小标题：设置页 / 分类与资产 / 钱迹数据 统一用这套 -->
+    <style name="SectionLabel">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
+    <style name="PageSubtitle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:alpha">0.55</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+    <!--
+      二级页沿用系统默认转场：预测性返回需要系统接管手势动画，
+      自定义 windowAnimationStyle 会让返回时页面直接叠在上一个页面上。
+    -->
+    <style name="Theme.AutoQianji.Page" parent="Theme.AutoQianji" />
+</resources>

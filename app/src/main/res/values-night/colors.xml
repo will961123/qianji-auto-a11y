@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 深色模式 -->
+    <color name="app_bg">#FF141416</color>
+    <color name="card_bg">#FF1C1C1E</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#8AFFFFFF</color>
+    <color name="icon_primary">#FFC8C8CE</color>
+    <color name="icon_tertiary">#66FFFFFF</color>
+    <color name="divider">#1AFFFFFF</color>
+    <color name="accent">#FFB39DFF</color>
+    <color name="on_accent">#FF1A1A1A</color>
+    <color name="button_secondary_bg">#FF2A2A2E</color>
+    <color name="overlay_bg">#FF1E1E20</color>
+    <color name="overlay_text">#FFFFFFFF</color>
+    <color name="tag_added_bg">#3322C55E</color>
+    <color name="tag_added_text">#FF4ADE80</color>
+    <color name="danger">#FFFF6B6B</color>
+</resources>

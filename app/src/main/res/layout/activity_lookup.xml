@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp">
+
+        <com.dsh.autoqianji.PageHeader
+            android:id="@+id/pageHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            app:headerTitle="资产管理"
+            app:headerSubtitle="分组标题右侧的 ＋ 可以把新条目加到该组；条目右侧把手可拖动排序，左滑删除。" />
+
+        <com.dsh.autoqianji.EmptyState
+            android:id="@+id/emptyLookup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="40dp"
+            android:visibility="gone"
+            app:emptyIcon="@drawable/ic_line_folder"
+            app:emptyTitle="还没有导入数据"
+            app:emptyHint="在「设置 → 从钱迹导入」导入后，这里会显示钱迹里的内容" />
+    </LinearLayout>
+
+    <!-- 列表自己滚动，避免套 ScrollView 时被截断 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvItems"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="none" />
+
+    <TextView
+        android:id="@+id/btnAddRoot"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/bg_primary"
+        android:gravity="center"
+        android:text="＋ 新增一级分类"
+        android:textColor="@color/on_accent"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+</LinearLayout>

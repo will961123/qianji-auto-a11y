@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">钱迹无障碍记账插件</string>
+    <string name="accessibility_desc">读取微信、支付宝、云闪付的支付结果页面，识别金额与商户后通过钱迹官方接口自动记一笔账。所有识别在本地完成，应用不申请网络权限。</string>
+</resources>

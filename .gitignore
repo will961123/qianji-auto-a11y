@@ -1,0 +1,29 @@
+# 构建产物
+build/
+.gradle/
+.kotlin/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# 本地工具链（JDK / Android SDK / Gradle，体积大，不入库）
+tools/
+
+# 本机路径与签名
+local.properties
+*.jks
+*.keystore
+keystore.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 调试过程产物
+shots/
+*.db
+*.db-journal
+*.xlsx
+capture*.png
