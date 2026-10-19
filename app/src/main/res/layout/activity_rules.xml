@@ -15,7 +15,7 @@
         android:paddingEnd="20dp"
         android:paddingBottom="24dp">
 
-        <com.dsh.autoqianji.PageHeader
+        <com.dsh.qianji_auto_a11y.PageHeader
                 android:id="@+id/pageHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never" />
         </LinearLayout>
-        <com.dsh.autoqianji.EmptyState
+        <com.dsh.qianji_auto_a11y.EmptyState
             android:id="@+id/tvEmpty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

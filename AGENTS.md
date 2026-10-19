@@ -6,7 +6,7 @@
 
 Android 无障碍服务，读支付/账单详情页文字 → 弹面板确认 → 通过 `qianji://publicapi/addbill` 提交到「钱迹」。
 
-包名 `com.dsh.autoqianji`，应用名「钱迹无障碍记账插件」，语言 Kotlin + 原生 View（无 Compose）。
+包名 `com.dsh.qianji_auto_a11y`，应用名「钱迹无障碍记账插件」，语言 Kotlin + 原生 View（无 Compose）。
 
 ## 快速命令
 
@@ -18,7 +18,7 @@ Android 无障碍服务，读支付/账单详情页文字 → 弹面板确认 �
 # 目标设备（若不在 PATH）
 adb logcat -s AutoQianji
 adb shell uiautomator dump /sdcard/ui.xml; adb pull /sdcard/ui.xml .
-adb exec-out run-as com.dsh.autoqianji cat databases/auto.db > auto.db
+adb exec-out run-as com.dsh.qianji_auto_a11y cat databases/auto.db > auto.db
 ```
 
 工具链优先用仓库内 `tools/`（jdk21 / android-sdk / gradle-8.9），否则用 `JAVA_HOME`、`ANDROID_HOME`。

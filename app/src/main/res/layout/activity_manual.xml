@@ -15,7 +15,7 @@
         android:paddingEnd="20dp"
         android:paddingBottom="24dp">
 
-        <com.dsh.autoqianji.PageHeader
+        <com.dsh.qianji_auto_a11y.PageHeader
                 android:id="@+id/pageHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -14,7 +14,7 @@
         android:paddingTop="20dp"
         android:paddingEnd="20dp">
 
-        <com.dsh.autoqianji.PageHeader
+        <com.dsh.qianji_auto_a11y.PageHeader
             android:id="@+id/pageHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             app:headerTitle="资产管理"
             app:headerSubtitle="分组标题右侧的 ＋ 可以把新条目加到该组；条目右侧把手可拖动排序，左滑删除。" />
 
-        <com.dsh.autoqianji.EmptyState
+        <com.dsh.qianji_auto_a11y.EmptyState
             android:id="@+id/emptyLookup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

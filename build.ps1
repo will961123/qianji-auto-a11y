@@ -1,4 +1,4 @@
-﻿param(
+﻿﻿param(
     [switch]$Install,
     [switch]$Clean
 )
@@ -34,10 +34,11 @@ $env:GRADLE_OPTS       = "-Djava.io.tmpdir=$($env:TEMP)"
 New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
 
 if ($Clean) {
-    & $gradle --no-daemon --console=plain clean
+    & $gradle -p "$root" --no-daemon --console=plain clean
 }
 
-& $gradle --no-daemon --console=plain :app:assembleDebug
+# -p 指定工程根目录：gradle 默认用当前工作目录，从别处调用会构建到错误的项目
+& $gradle -p "$root" --no-daemon --console=plain :app:assembleDebug
 if ($LASTEXITCODE -ne 0) { throw "构建失败，退出码 $LASTEXITCODE" }
 
 $apk = Join-Path $root 'app\build\outputs\apk\debug\app-debug.apk'

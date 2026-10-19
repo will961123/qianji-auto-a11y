@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.dsh.autoqianji"
+    namespace = "com.dsh.qianji_auto_a11y"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.dsh.autoqianji"
+        applicationId = "com.dsh.qianji_auto_a11y"
         minSdk = 30
         targetSdk = 35
         versionCode = 1

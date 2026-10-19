@@ -3,7 +3,7 @@
 Android 无障碍自动记账插件：读取支付/账单详情页的文字，弹窗确认后一键记到「钱迹」。
 
 > 项目名取自三个关键词：**qianji**（钱迹）、**auto**（自动记账）、**a11y**（accessibility，无障碍）。
-> 应用名：钱迹无障碍记账插件；包名：`com.dsh.autoqianji`。
+> 应用名：钱迹无障碍记账插件；包名：`com.dsh.qianji_auto_a11y`。
 
 ## 已验证环境
 
@@ -143,7 +143,7 @@ adb pull /sdcard/ui.xml .
 
 ```powershell
 # 拉取（debug 包可直接 run-as）
-adb exec-out run-as com.dsh.autoqianji cat databases/auto.db > auto.db
+adb exec-out run-as com.dsh.qianji_auto_a11y cat databases/auto.db > auto.db
 ```
 
 用任意 SQLite 工具打开即可查看 `logs / assets / categories / books / rules`。
