@@ -478,13 +478,18 @@ class AutoRecordService : AccessibilityService() {
      * 同一个页面（同一窗口）只弹一次：用户关掉后不再骚扰，
      * 直到重新进入这个页面（窗口 id 变了）才会再弹。
      */
+    /**
+     * 判重比对的是「记账记录」里的金额，而记录存的是实付（logAmount），
+     * 有优惠的账单不能拿原价去比，否则永远匹配不上。
+     */
+    private fun loggedAmount(d: Draft): String =
+        String.format(java.util.Locale.US, "%.2f", d.logAmount ?: d.amount)
+
     private fun promptForConfirm(draft: Draft, pageKey: String) {
-        val key = draft.pkg + "|" + String.format(java.util.Locale.US, "%.2f", draft.amount) +
-            "|" + draft.merchant + "|" + (draft.time ?: "")
+        val key = draft.pkg + "|" + loggedAmount(draft) + "|" + draft.merchant + "|" + (draft.time ?: "")
         val now = System.currentTimeMillis()
         // 同页面可能翻到别的账单，取消抑制要精确到这一笔
-        val dismissKey = pageKey + "|" + String.format(java.util.Locale.US, "%.2f", draft.amount) +
-            "|" + (draft.time ?: "")
+        val dismissKey = pageKey + "|" + loggedAmount(draft) + "|" + (draft.time ?: "")
         if (dismissedPages.contains(dismissKey)) {
             Log.i(TAG, "prompt skip: dismissed $dismissKey")
             return
@@ -511,7 +516,7 @@ class AutoRecordService : AccessibilityService() {
 
         val alreadyLogged = try {
             val store = Store(this)
-            val amountText = String.format(java.util.Locale.US, "%.2f", draft.amount)
+            val amountText = loggedAmount(draft)
             if (draft.time != null) {
                 store.hasLoggedBill(draft.pkg, amountText, draft.merchant, draft.time!!)
             } else {
@@ -563,7 +568,7 @@ class AutoRecordService : AccessibilityService() {
     private fun dispatch(draft: Draft) {
         Log.d(TAG, "draft amount=${draft.amount} merchant=${draft.merchant} cate=${draft.catename} type=${draft.type} account=${draft.account} method=${draft.paymentMethod} time=${draft.time}")
         val now = System.currentTimeMillis()
-        val amountText = String.format(java.util.Locale.US, "%.2f", draft.amount)
+        val amountText = loggedAmount(draft)
         val windowMs = if (draft.time != null) 20 * 60_000L else 60_000L
 
         // 判重以「记账记录」为准：

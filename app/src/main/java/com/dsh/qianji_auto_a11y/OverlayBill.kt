@@ -63,7 +63,7 @@ object OverlayBill {
         val view = attach(ctx, R.layout.overlay_duplicate) ?: return
         vibrate(ctx)
         view.findViewById<TextView>(R.id.dupSummary).text = listOfNotNull(
-            String.format(java.util.Locale.US, "¥%.2f", draft.amount),
+            String.format(java.util.Locale.US, "¥%.2f", draft.logAmount ?: draft.amount),
             draft.merchant.ifBlank { null },
             draft.time
         ).joinToString(" · ")
