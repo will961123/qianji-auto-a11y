@@ -111,6 +111,9 @@ object NodeScan {
         val merchant = merchantFromLabel(scoped, profile.merchantLabels)
             ?: merchantBySuffix(scoped, profile.merchantSuffixes)
             ?: merchantAboveAmount(scoped, amountNode, fieldLabels)
+            // 收窄范围可能把标题（商户名）裁掉，比如话费充值页的「中国联通」在金额上方 100px、
+            // 而锚点从「支付时间」倒推 700px 刚好够不着。这时放开到整页再找一次。
+            ?: merchantAboveAmount(nodes, amountNode, fieldLabels)
             ?: merchantFromDetail(scoped, amountNode, fieldLabels)
         val amountText = amountNode.text.trim()
         val type = if (profile.fixedType >= 0) profile.fixedType else when {
